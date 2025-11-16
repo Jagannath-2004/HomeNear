@@ -1,0 +1,197 @@
+<% layout("/layouts/boilerplate") %>
+    <!-- <h3>All Listings</h3> -->
+
+<style>
+
+    @media (max-width: 992px) {
+        p,label {
+            font-size: 16px;
+        }
+        tax-toggle{
+            height: 3rem;
+        }
+    }
+
+    /* Small screens */
+    @media (max-width: 768px) {
+        p,label {
+            font-size: 14px;
+        }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 480px) {
+        p,label {
+            font-size: 12px;
+        }
+    }
+    .filters-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin-top: 1rem;
+    }
+
+    #filters {
+        display: flex;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        scroll-behavior: smooth;
+    }
+
+    #filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Filter styling */
+    .filter {
+        text-align: center;
+        margin-right: 2rem;
+        opacity: 0.7;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .filter a {
+        color: black;
+    }
+
+    .filter:hover {
+        opacity: 1;
+    }
+
+    /* Arrow Buttons */
+    .scroll-btn {
+        background: white;
+        border: none;
+        font-size: .8rem;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(0,0,0,0.15);
+        z-index: 10;
+    }
+
+    #left-btn {
+        margin-right: 10px;
+    }
+
+    #right-btn {
+        margin-left: 10px;
+    }
+
+    /* Tax Toggle*/
+    .tax-toggle{
+        border: 1px solid rgba(0, 0, 0,0.3);
+        border-radius: 5px;
+        height:auto;
+        display: flex;
+        align-items: center;
+        padding: 5px;
+    }
+</style>
+
+<div class="filters-wrapper">
+    <button id="left-btn" class="scroll-btn"><i class="fa-solid fa-chevron-left"></i></button>
+
+    <div id="filters">
+        <div class="filter">
+            <a href="/listings/category/trending">
+                <i class="fa-solid fa-fire"></i>
+                <p>Trending</p>
+            </a>
+        </div>
+        <div class="filter">
+            <a href="/listings/category/rooms">
+                <i class="fa-solid fa-bed"></i>
+                <p>Rooms</p>
+            </a>
+        </div>
+        <div class="filter">
+            <a href="/listings/category/mountains">
+                <i class="fa-solid fa-mountain"></i>
+                <p>Mountains</p>
+            </a>
+            
+        </div>
+        <div class="filter">
+            <a href="/listings/category/iconicCities">
+                <i class="fa-solid fa-city"></i>
+                <p>Iconic Cities</p>
+            </a>
+            
+        </div>
+        <div class="filter">
+            <a href="/listings/category/castles">
+                <i class="fa-brands fa-fort-awesome"></i>
+                <p>Castles</p>
+            </a>
+            
+        </div>
+        <div class="filter">
+            <a href="/listings/category/farms">
+                <i class="fa-solid fa-cow"></i>
+                <p>Farms</p>
+            </a>
+            
+        </div>
+        <div class="filter">
+            <a href="/listings/category/arctic">
+                <i class="fa-solid fa-snowflake"></i>
+                <p>Arctic</p>
+            </a>
+            
+        </div>
+        <div class="filter">
+            <a href="/listings/category/camping">
+                <i class="fa-solid fa-campground"></i>
+                <p>Camping</p>
+            </a>
+            
+        </div>
+        <div class="filter">
+            <a href="/listings/category/boats">
+                <i class="fa-solid fa-ship"></i>
+                <p>Boats</p>
+            </a>
+            
+        </div>
+        <div class="filter">
+            <a href="/listings/category/dome">
+                <i class="fa-solid fa-igloo"></i>
+                <p>Dome</p>
+            </a>
+            
+        </div>
+        
+    </div>
+
+    <button id="right-btn" class="scroll-btn"><i class="fa-solid fa-chevron-right"></i></button>
+    <div class="tax-toggle ms-auto mb-3">
+            <div class="form-check-reverse form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+            <label class="form-check-label" for="switchCheckDefault">Display total before Tax</label>
+        </div>
+        </div>
+</div>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+    <% for ( let listing of allListings) {%>
+        <a href="/listings/<%=listing._id%>">
+        <div class="col">
+            <div class="card card-listing">
+                <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.image.filename %>" >
+                <div class="card-img-overlay"></div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <strong><%= listing.title %></strong><br>
+                        &#8377; <span class="priceInfo" data-base="<%= listing.price %>"><%= listing.price.toLocaleString("en-IN")  %></span> /night
+                    </p>
+                </div>
+            </div>
+        </div>
+        </a>
+        
+    <% } %>
+</div>
+        
