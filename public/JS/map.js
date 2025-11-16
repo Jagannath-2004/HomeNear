@@ -18,7 +18,7 @@
   const customIcon = L.icon({
     // className: "circle-marker",
     // html: `<img src="/images/HomeNear_logo2.png" class="circle-img">`,
-    iconUrl: '/images/HomeNear_logo.png',  //path to your logo
+    iconUrl: '/images/HomeNear_Logo.png',  //path to your logo
     iconSize: [50, 50],           // size of the icon
     iconAnchor: [25, 50],         // point of the icon which corresponds to marker's location
     popupAnchor: [0, -50]         // popup position relative to icon
