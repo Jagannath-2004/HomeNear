@@ -4,11 +4,11 @@
   const lng = listing.geometry.coordinates[0]
 
   const map = L.map('map',{
-    zoomControl: false,        // disable + and - buttons
-    scrollWheelZoom: false,    // disable mouse wheel zoom
-    doubleClickZoom: false,    // disable double click zoom
-    touchZoom: false,          // disable touch zoom
-    dragging: false,             // optional: allow dragging (set false to disable)
+    zoomControl: true,        // disable + and - buttons
+    scrollWheelZoom: true,    // disable mouse wheel zoom
+    doubleClickZoom: true,    // disable double click zoom
+    touchZoom: true,          // disable touch zoom
+    dragging: true,             // optional: allow dragging (set false to disable)
   }).setView([lat, lng], 13);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
