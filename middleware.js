@@ -12,6 +12,8 @@ module.exports.isLogedIn=(req,res,next)=>{
     next();
 };
 
+
+
 module.exports.saveRedirectUrl=(req,res,next)=>{
     if(req.session.redirectUrl){
         res.locals.redirectUrl=req.session.redirectUrl;
@@ -20,25 +22,47 @@ module.exports.saveRedirectUrl=(req,res,next)=>{
 }
 
 module.exports.isOwner=async(req,res,next)=>{
-    let{id}=req.params;
+    // let{id}=req.params;
+    // let listing = await Listing.findById(id);
+    // //Checking if current user and listing owner is same
+    // if(!listing.owner._id.equals(res.locals.currentUser._id)){
+    //     req.flash("error","You are not owner of this listing");
+    //     return res.redirect(`/listings/${id}`);
+    // }
+    // next();
+    let { id } = req.params;
     let listing = await Listing.findById(id);
-    //Checking if current user and listing owner is same
-    if(!listing.owner._id.equals(res.locals.currentUser._id)){
-        req.flash("error","You are not owner of this listing");
-        return res.redirect(`/listings/${id}`);
+
+
+    const currentUser = res.locals.currentUser;
+
+    // Allow admin OR owner
+    if (
+        currentUser.role === "admin" ||
+        listing.owner._id.equals(currentUser._id)
+    ) {
+        return next();
     }
-    next();
+
+    req.flash("error", "You are not authorized to do this");
+    return res.redirect(`/listings/${id}`);
 }
 
 module.exports.isAuthorOfReview=async(req,res,next)=>{
-    let{id,reviewId}=req.params;
+    let { id, reviewId } = req.params;
     let review = await Review.findById(reviewId);
-    //Checking if current user and Review owner is same
-    if(!review.author._id.equals(res.locals.currentUser._id)){
-        req.flash("error","You are not the author of this review");
-        return res.redirect(`/listings/${id}`);
+
+    const currentUser = res.locals.currentUser;
+
+    if (
+        currentUser.role === "admin" ||
+        review.author._id.equals(currentUser._id)
+    ) {
+        return next();
     }
-    next();
+
+    req.flash("error", "You are not authorized to do this");
+    return res.redirect(`/listings/${id}`);
 }
 
 module.exports.validateListing=(req,res,next)=>{

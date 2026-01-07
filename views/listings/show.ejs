@@ -19,7 +19,7 @@
                 <p class="card-text"><%= listing.country %></p>
             </div>
         </div>
-        <% if(currentUser && currentUser._id.equals(listing.owner._id)) { %>
+        <% if(currentUser && (currentUser.role === "admin" || currentUser._id.equals(listing.owner._id))) { %>
         <div class=" btns">
             <a class="btn btn-danger " href="/listings/<%= listing._id %>/edit">Edit</a>
             <form  method="post" action="/listings/<%= listing.id %>?_method=DELETE">
@@ -28,7 +28,29 @@
         </div>
         <% } %>
     </div>
-    <hr>
+
+    <% if (currentUser) { %>
+        <div class="card p-3 mt-3">
+            <h5>Rent this place</h5>
+
+            <div class="mb-2">
+                <label>From</label>
+                <input type="date" id="fromDate" class="form-control" required>
+            </div>
+
+            <div class="mb-2">
+                <label>To</label>
+                <input type="date" id="toDate" class="form-control" required>
+            </div>
+
+            <button id="rentBtn" class="btn btn-primary w-100">
+                Check & Pay
+            </button>
+        </div>
+    <% } else { %>
+        <p class="text-muted">Login to rent this listing</p>
+    <% } %>
+<hr>
     <div class="col-10 offset-1 col-md-6 offset-md-3">
         <% if(!currentUser) { %>
             <h5>Login to write a review</h5>
@@ -75,7 +97,7 @@
                             <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
                             <p class="card-text"><%= review.comment %></p>
                             <!-- <p class="card-text"> stars</p> -->
-                            <% if(currentUser && currentUser._id.equals(review.author._id)){ %>
+                            <% if(currentUser && (currentUser.role === "admin" || currentUser._id.equals(review.author._id))){ %>
                             <form class="mb-3" method="post" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
                                 <button class="btn btn-sm btn-dark">Delete</button>
                             </form>
@@ -91,6 +113,59 @@
 </div>
 
 <div id="map" class="mb-3" style="height: 400px; width: 100%; border-radius: 10px;"></div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById("rentBtn")?.addEventListener("click", async () => {
+    const fromDate = document.getElementById("fromDate").value;
+    const toDate = document.getElementById("toDate").value;
+
+    if (!fromDate || !toDate) {
+        alert("Please select both dates");
+        return;
+    }
+
+    const res = await fetch("/listings/<%= listing._id %>/book", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ fromDate, toDate })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+
+    const options = {
+        key: data.key,
+        amount: data.amount,
+        currency: "INR",
+        order_id: data.orderId,
+        name: "HomeNear",
+        description: "Listing Booking",
+        handler: function (response) {
+            fetch("/payment/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    bookingId: data.bookingId,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_signature: response.razorpay_signature
+                })
+            }).then(() => {
+                alert("Booking successful!");
+                location.reload();
+            });
+        }
+    };
+
+    new Razorpay(options).open();
+});
+</script>
 
 
 

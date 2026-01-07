@@ -17,6 +17,8 @@ const ExpressErrors= require("./utils/ExpressErrors");
 const listingsRouter = require("./routes/listing");
 const reviewsRouter = require("./routes/review");
 const usersRouter = require("./routes/user");
+const bookingRoutes = require("./routes/booking");
+const paymentRoutes = require("./routes/payment");
 const session = require("express-session");
 const MongoStore = require('connect-mongo');
 const flash= require("connect-flash");
@@ -31,6 +33,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname,"views"));
 app.use(express.static(path.join(__dirname,"public")));
 app.use(express.urlencoded({extended:true}));
+app.use(express.json());
 app.use(methodOverride('_method'));
 app.engine("ejs", ejsMate);
 
@@ -99,6 +102,8 @@ app.use((req,res,next)=>{
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews",reviewsRouter);
 app.use("/", usersRouter);
+app.use("/listings/:id/book", bookingRoutes);
+app.use("/payment", paymentRoutes);
 
 // app.get("/testlisting",async (req,res)=>{
 //     let sampleListing = new Listing({
